@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Absen;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str; //tes buat commit
 
 class AbsenController extends Controller
@@ -40,5 +41,28 @@ class AbsenController extends Controller
         ]);
 
         return response()->json(['message' => 'Absen berhasil disimpan!', 'image' => $imageName]);
+    }
+
+    public function proxyToPython(Request $request)
+    {
+        if (!$request->hasFile('image')) {
+            return response()->json(['status' => 'error', 'message' => 'Gambar tidak ditemukan'], 400);
+        }
+
+        try {
+            $response = Http::attach(
+                'image',
+                file_get_contents($request->file('image')->getRealPath()),
+                $request->file('image')->getClientOriginalName()
+            )->post('http://127.0.0.1:5000/recognize');
+
+            return response()->json($response->json(), $response->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menghubungi API wajah lokal.',
+                'detail' => $e->getMessage()
+            ], 500);
+        }
     }
 }
