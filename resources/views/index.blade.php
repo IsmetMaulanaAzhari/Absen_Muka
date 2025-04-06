@@ -10,6 +10,7 @@
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
@@ -19,8 +20,8 @@
     <div class="container">
       <h1>Sistem Absensi Wajah</h1>
       <ul>
-        <li class="active"><a href="#absen" data-toggle="tab">Absensi</a></li>
-        <li><a href="absensi.blade.php" data-toggle="tab">Log Absensi</a></li>
+        <li class="active"><a href="{{ route('absen.index') }}" data-toggle="tab">Absensi</a></li>
+        <li><a href="{{ route('absen.log') }}" data-toggle="tab">Log Absensi</a></li>
       </ul>
     </div>
   </nav>
@@ -74,6 +75,7 @@
   </footer>
   <script src="js/scripts.js"></script>
   <script src="js/capture.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 </body>
 
 </html>

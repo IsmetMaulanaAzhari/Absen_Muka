@@ -15,6 +15,14 @@ $(document).ready(function () {
       });
   });
 
+  const notyf = new Notyf({
+    duration: 3000,
+    position: {
+      x: 'center',
+      y: 'top',
+    }
+  });
+
   $("#snap").click(function () {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -29,10 +37,11 @@ $(document).ready(function () {
         _token: $('meta[name="csrf-token"]').attr("content"),
       },
       success: function (response) {
-        alert("Berhasil absen! Gambar: " + response.image);
+        const imageInfo = response.image ? " Gambar: " + response.image : "";
+        notyf.success((response.message || "Berhasil absen!") + imageInfo);
       },
       error: function (xhr) {
-        alert("Gagal menyimpan absen!");
+        notyf.error('Gagal menyimpan absen!');
       },
     });
   });

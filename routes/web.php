@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AbsenController::class, 'index'])->name('absen.index');
 
-Route::get('/absen', function () {
+Route::get('/log-absen', function () {
     return view('absensi');
-});
+})->name('absen.log');
 
 Route::post('/absen/store', [AbsenController::class, 'store'])->name('absen.store');
