@@ -14,7 +14,7 @@
         <div class="container">
             <h1>Sistem Absensi Wajah</h1>
             <ul>
-                <li><a href="welcome.blade.php" data-toggle="tab">Absensi</a></li>
+                <li><a href="{{ url('/') }}" data-toggle="tab">Absensi</a></li>
                 <li class="active"><a href="#history" data-toggle="tab">Log Absensi</a></li>
             </ul>
         </div>
