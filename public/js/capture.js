@@ -11,13 +11,29 @@ $(document).ready(function () {
   let currentImageData = null;
 
   // Open Camera
-  $("#open").click(function () {
+  $("#open").click(function (e) {
+    e.preventDefault();
+    console.log('[capture.js] Open camera button clicked');
+
+    // Clear previous status
+    resetStatusMessage();
+
     navigator.mediaDevices
       .getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } })
       .then(function (stream) {
-        video.srcObject = stream;
-        video.play();
-        
+        console.log('[capture.js] getUserMedia succeeded', stream);
+        try {
+          video.srcObject = stream;
+          // Ensure play is called after metadata is loaded
+          video.onloadedmetadata = function () {
+            video.play().catch(function(playErr){
+              console.error('[capture.js] video.play() failed', playErr);
+            });
+          };
+        } catch (err) {
+          console.error('[capture.js] error assigning stream to video', err);
+        }
+
         // Show camera wrapper and hide open button
         $(wrap).addClass("active");
         $(openBtn).hide();
@@ -25,7 +41,9 @@ $(document).ready(function () {
         resetStatusMessage();
       })
       .catch(function (err) {
-        alert("Gagal membuka kamera: " + err);
+        console.error('[capture.js] Gagal membuka kamera:', err);
+        $(statusMsg).html('<i class="fas fa-exclamation-circle" style="color: #eb3349;"></i><span>Gagal membuka kamera: ' + (err.message || err.name || err) + '</span>');
+        alert('Gagal membuka kamera: ' + (err.message || err.name || err));
       });
   });
 
