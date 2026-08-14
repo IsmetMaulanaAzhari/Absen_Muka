@@ -27,50 +27,53 @@
 
     <main class="main-content">
         <div class="container">
-            <div class="card-container" style="max-width: 900px;">
+            <div class="card-container" style="max-width: 1100px;">
                 <div class="card-header-custom">
-                    <h2><i class="fas fa-clipboard-list"></i> Riwayat Absensi</h2>
-                    <p>Daftar kehadiran karyawan</p>
+                    <h2><i class="fas fa-clipboard-list"></i> Riwayat Absensi Wajah</h2>
+                    <p>Daftar foto absensi yang sudah tersimpan di database</p>
                 </div>
 
                 <div style="padding: 30px;">
-                    <!-- Action Buttons -->
-                    <div class="d-flex gap-3 mb-4 flex-wrap justify-content-center">
-                        <button class="btn-success" onclick="absenMasuk()">
-                            <i class="fas fa-sign-in-alt me-2"></i> Absen Masuk
-                        </button>
-                        <button class="btn-danger" onclick="absenKeluar()">
-                            <i class="fas fa-sign-out-alt me-2"></i> Absen Keluar
-                        </button>
-                    </div>
-
-                    <!-- Table -->
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th><i class="fas fa-user me-2"></i>Nama</th>
-                                    <th><i class="fas fa-calendar me-2"></i>Tanggal</th>
-                                    <th><i class="fas fa-clock me-2"></i>Jam Masuk</th>
-                                    <th><i class="fas fa-clock me-2"></i>Jam Keluar</th>
+                                    <th style="width: 80px;">#</th>
+                                    <th style="width: 120px;">Foto</th>
+                                    <th>Path Database</th>
+                                    <th style="width: 220px;">Waktu Tersimpan</th>
                                 </tr>
                             </thead>
-                            <tbody id="logAbsensi">
-                                <!-- Data will be loaded here -->
+                            <tbody>
+                                @forelse ($absens as $absen)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>
+                                            <img
+                                                src="{{ asset('storage/' . $absen->image) }}"
+                                                alt="Foto absensi {{ $loop->iteration }}"
+                                                style="width: 72px; height: 72px; object-fit: cover; border-radius: 16px; border: 2px solid #e9e6ff;"
+                                            >
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">{{ $absen->image }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold">{{ $absen->created_at?->format('d F Y H:i:s') }}</div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="text-center py-5">
+                                                <i class="fas fa-inbox fa-3x mb-3" style="color: #ccc;"></i>
+                                                <p class="mb-0" style="color: #888;">Belum ada data absensi wajah</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
-                    </div>
-                    
-                    <!-- Empty State -->
-                    <div id="emptyState" class="text-center py-5" style="display: none;">
-                        <i class="fas fa-inbox fa-3x mb-3" style="color: #ccc;"></i>
-                        <p style="color: #888;">Belum ada data absensi</p>
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <button class="btn-warning" onclick="hapusLog()">
-                            <i class="fas fa-trash-alt me-2"></i> Hapus Semua Log
-                        </button>
                     </div>
                 </div>
             </div>
@@ -83,6 +86,5 @@
         </div>
     </footer>
 
-    <script src="js/scripts.js"></script>
 </body>
 </html>

@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AbsenController::class, 'index'])->name('absen.index');
 
-Route::get('/absen', function () {
-    return view('absensi');
-});
+Route::get('/absen', [AbsenController::class, 'history'])->name('absen.history');
 
 Route::post('/absen/store', [AbsenController::class, 'store'])->name('absen.store');

@@ -14,6 +14,13 @@ class AbsenController extends Controller
         return view('index');
     }
 
+    public function history()
+    {
+        $absens = Absen::latest()->get();
+
+        return view('absensi', compact('absens'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([

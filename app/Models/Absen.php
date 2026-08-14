@@ -9,7 +9,7 @@ class Absen extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['image',];
+    protected $fillable = ['image'];
 
     protected $casts = [
         'created_at' => 'datetime',
