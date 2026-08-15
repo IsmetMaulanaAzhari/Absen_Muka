@@ -25,11 +25,18 @@ class AbsenController extends Controller
     {
         $request->validate([
             'image' => 'required|string',
+            'face_signature' => 'nullable|string|max:64',
         ]);
 
         $image = $request->image;
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
+        $decodedImage = base64_decode($image, true);
+
+        if ($decodedImage === false) {
+            return response()->json(['message' => 'Format gambar tidak valid.'], 422);
+        }
+
         $imageName = Str::random(10) . '.png';
 
         // Buat struktur path: absen/2025/04/04/
@@ -39,13 +46,19 @@ class AbsenController extends Controller
         $folder = "absen/{$year}/{$month}/{$day}";
 
         // Simpan file ke folder sesuai tanggal
-        Storage::disk('public')->put($folder . '/' . $imageName, base64_decode($image));
+        Storage::disk('public')->put($folder . '/' . $imageName, $decodedImage);
 
         // Simpan path ke database
-        Absen::create([
+        $absen = Absen::create([
             'image' => $folder . '/' . $imageName,
+            'face_signature' => $request->face_signature,
         ]);
 
-        return response()->json(['message' => 'Absen berhasil disimpan!', 'image' => $imageName]);
+        return response()->json([
+            'message' => 'Absen berhasil disimpan!',
+            'id' => $absen->id,
+            'image' => $imageName,
+            'face_signature' => $absen->face_signature,
+        ]);
     }
 }

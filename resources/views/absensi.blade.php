@@ -40,6 +40,7 @@
                                 <tr>
                                     <th style="width: 80px;">#</th>
                                     <th style="width: 120px;">Foto</th>
+                                    <th style="width: 220px;">Signature Wajah</th>
                                     <th>Path Database</th>
                                     <th style="width: 220px;">Waktu Tersimpan</th>
                                 </tr>
@@ -56,6 +57,9 @@
                                             >
                                         </td>
                                         <td>
+                                            <code style="font-size: 0.8rem;">{{ $absen->face_signature ?? '-' }}</code>
+                                        </td>
+                                        <td>
                                             <div class="fw-semibold">{{ $absen->image }}</div>
                                         </td>
                                         <td>
@@ -64,7 +68,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4">
+                                        <td colspan="5">
                                             <div class="text-center py-5">
                                                 <i class="fas fa-inbox fa-3x mb-3" style="color: #ccc;"></i>
                                                 <p class="mb-0" style="color: #888;">Belum ada data absensi wajah</p>

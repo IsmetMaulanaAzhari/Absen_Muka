@@ -49,10 +49,16 @@ $(document).ready(function () {
 
   // Capture Photo
   $("#snap").click(function () {
+    if (!video.videoWidth || !video.videoHeight) {
+      $(statusMsg).html('<i class="fas fa-exclamation-circle" style="color: #eb3349;"></i><span>Preview kamera belum siap. Coba beberapa detik lagi.</span>');
+      return;
+    }
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     currentImageData = canvas.toDataURL("image/png");
+    const faceSignature = generateFaceSignature(canvas);
 
     // Show loading state
     const snapBtn = $("#snap");
@@ -65,6 +71,7 @@ $(document).ready(function () {
       method: "POST",
       data: {
         image: currentImageData,
+        face_signature: faceSignature,
         _token: $('meta[name="csrf-token"]').attr("content"),
       },
       success: function (response) {
@@ -126,6 +133,45 @@ $(document).ready(function () {
 
   function resetStatusMessage() {
     $(statusMsg).html('<i class="fas fa-info-circle"></i><span>Posisikan wajah Anda di tengah kamera</span>');
+  }
+
+  function generateFaceSignature(sourceCanvas) {
+    const smallCanvas = document.createElement("canvas");
+    smallCanvas.width = 9;
+    smallCanvas.height = 8;
+
+    const smallCtx = smallCanvas.getContext("2d", { willReadFrequently: true });
+    smallCtx.drawImage(sourceCanvas, 0, 0, 9, 8);
+
+    const pixels = smallCtx.getImageData(0, 0, 9, 8).data;
+    let bits = "";
+
+    for (let y = 0; y < 8; y += 1) {
+      for (let x = 0; x < 8; x += 1) {
+        const leftOffset = (y * 9 + x) * 4;
+        const rightOffset = (y * 9 + (x + 1)) * 4;
+
+        const leftGray =
+          pixels[leftOffset] * 0.299 +
+          pixels[leftOffset + 1] * 0.587 +
+          pixels[leftOffset + 2] * 0.114;
+
+        const rightGray =
+          pixels[rightOffset] * 0.299 +
+          pixels[rightOffset + 1] * 0.587 +
+          pixels[rightOffset + 2] * 0.114;
+
+        bits += leftGray > rightGray ? "1" : "0";
+      }
+    }
+
+    let hex = "";
+    for (let i = 0; i < bits.length; i += 4) {
+      const chunk = bits.slice(i, i + 4);
+      hex += parseInt(chunk, 2).toString(16);
+    }
+
+    return hex;
   }
 
   function showToast(message, type) {
