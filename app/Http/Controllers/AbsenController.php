@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Absen;
-use Illuminate\Support\Str; //tes buat commit
+use Illuminate\Support\Str;
 
 class AbsenController extends Controller
 {
@@ -37,21 +37,31 @@ class AbsenController extends Controller
             return response()->json(['message' => 'Format gambar tidak valid.'], 422);
         }
 
+        $faceSignature = trim((string) $request->face_signature);
+
+        if ($faceSignature !== '') {
+            $existingAbsen = Absen::findMatchingFace($faceSignature);
+
+            if ($existingAbsen && $existingAbsen->created_at?->isSameDay(now())) {
+                return response()->json([
+                    'message' => 'Wajah Anda sudah terdeteksi untuk absensi hari ini.',
+                    'duplicate' => true,
+                ], 409);
+            }
+        }
+
         $imageName = Str::random(10) . '.png';
 
-        // Buat struktur path: absen/2025/04/04/
         $year = now()->format('Y');
         $month = now()->format('m');
         $day = now()->format('d');
         $folder = "absen/{$year}/{$month}/{$day}";
 
-        // Simpan file ke folder sesuai tanggal
         Storage::disk('public')->put($folder . '/' . $imageName, $decodedImage);
 
-        // Simpan path ke database
         $absen = Absen::create([
             'image' => $folder . '/' . $imageName,
-            'face_signature' => $request->face_signature,
+            'face_signature' => $faceSignature,
         ]);
 
         return response()->json([
